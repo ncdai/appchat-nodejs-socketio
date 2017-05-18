@@ -8,45 +8,57 @@ var server = require('http').Server(app);
 var io = require('socket.io')(server);
 server.listen(3000);
 
-var mangUsers = ["AAA"];
+var listUsers = [];
+var listTyping = [];
 
 io.on('connection', function(socket) {
     console.log('Co nguoi ket noi ' + socket.id);
-    
+
     socket.on('client-send-username', function(data) {
-        if (mangUsers.indexOf(data) >= 0) {
-            // fail
-            socket.emit('server-send-dki-thatbai');
+        if (listUsers.indexOf(data) !== -1) {
+            console.log('tai khoan da duoc su dung');
+            socket.emit('server-send-register-error', {
+                res: data + ' already registered',
+                username: data
+            });
         } else {
-            // dang ky thanh cong
-            mangUsers.push(data);
             socket.username = data;
-            socket.emit('server-send-dki-thanhcong', data);
-            io.sockets.emit('server-send-danhsach-users', mangUsers);
+            listUsers.push(data);
+            console.log(listUsers);
+            socket.emit('server-send-register-success', {
+                res: data + ' register successfully',
+                username: data
+            });
+            io.sockets.emit('server-send-list-users', listUsers);
+            io.sockets.emit('server-send-list-typing', listTyping);
         }
     });
 
+    socket.on('client-send-logout', function() {
+        console.log(socket.username + ' loged out ');
+        listUsers.splice(listUsers.indexOf(socket.username), 1);
+        socket.broadcast.emit('server-send-list-users', listUsers);
+    });
+
     socket.on('client-send-message', function(data) {
-        io.sockets.emit('server-send-message', { username: socket.username, noidung: data });
+        io.sockets.emit('server-send-message', {
+            id: socket.id,
+            username: socket.username,
+            message: data
+        });
     });
 
-    socket.on('logout', function() {
-        mangUsers.splice(mangUsers.indexOf());
-        socket.broadcast.emit('server-send-danhsach-users', mangUsers);
+    socket.on('client-send-typing', function() {
+        listTyping.push(socket.username);
+        socket.broadcast.emit('server-send-list-typing', listTyping);
     });
-
-    socket.on('toi-dang-go-chu', function() {
-        var s = socket.username + ' dang go chu';
-        io.sockets.emit('ai-do-dang-go-chu', s);
-    });
-
-    socket.on('toi-ngung-go-chu', function() {
-        var s = socket.username + ' ngung dang go chu';
-        io.sockets.emit('ai-do-ngung-go-chu', s);
+    socket.on('client-send-stop-typing', function() {
+        listTyping.splice(listTyping.indexOf(socket.username), 1);
+        socket.broadcast.emit('server-send-list-typing', listTyping);
     });
 
 });
 
 app.get('/', function(req, res) {
-    res.render('trangchu');
+    res.render('app');
 });

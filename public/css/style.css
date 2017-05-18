@@ -1,0 +1,48 @@
+body {
+    background-color: #f7f7f7;
+}
+
+#listMessages {
+    height: 500px;
+    overflow: auto;
+}
+
+#user {
+    display: none;
+}
+
+#chat {
+    display: none;
+}
+
+#registerResult {
+    display: none;
+}
+
+.message {
+    background-color: #0084ff;
+    width: 60%;
+    padding: 20px;
+    border-radius: 10px;
+    color: #fff;
+    margin-bottom: 20px;
+    clear: both;
+}
+.message.right {
+    float: right;
+    background: #eee;
+    color: #333;
+    text-align: right;
+    clear: both;
+}
+.message .message-username {
+    font-size: 16px;
+    margin: 0 0 5px 0;
+}
+.message .message-content {
+    margin: 0;
+}
+
+#typing {
+    margin-bottom: 10px;
+}
