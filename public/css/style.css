@@ -1,6 +1,12 @@
 body {
     background-color: #f7f7f7;
+    height: 100%;
 }
+
+.including:before, .including:after {content: " ";display: table;}
+.including:after {clear: both;}
+.including:before, .including:after {content: " ";display: table;}
+.including:after {clear: both;}
 
 #listMessages {
     height: 500px;
@@ -19,30 +25,73 @@ body {
     display: none;
 }
 
+.message-group {
+    clear: both;
+    position: relative;
+    margin-bottom: 15px;
+}
+.message-avatar {
+    position: absolute;
+    bottom: 2px;
+    border-radius: 100%;
+    width: 40px;
+    height: 40px;
+}
+.message-body {
+    margin-left: 50px;
+}
 .message {
-    background-color: #0084ff;
-    width: 60%;
-    padding: 20px;
-    border-radius: 10px;
-    color: #fff;
-    margin-bottom: 20px;
-    clear: both;
-}
-.message.right {
-    float: right;
-    background: #eee;
+    clear: left;
+    background-color: #eee;
+    margin-bottom: 3px;
+    padding: 5px 10px;
+    border-radius: 15px;
     color: #333;
-    text-align: right;
-    clear: both;
-}
-.message .message-username {
-    font-size: 16px;
-    margin: 0 0 5px 0;
-}
-.message .message-content {
-    margin: 0;
+    max-width: 60%;
+    float: left;
+    word-wrap: break-word;
 }
 
-#typing {
-    margin-bottom: 10px;
+.message.bottom {
+    border-bottom-left-radius: 0;
+}
+.message.top {
+    border-top-left-radius: 0;
+}
+.message-group.me .message.bottom {
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 0;
+}
+.message-group.me .message.top {
+    border-top-left-radius: 15px;
+    border-top-right-radius: 0;
+}
+
+.message-group.me .message {
+    background-color: #0084ff;
+    color: #fff;
+    clear: right;
+    float: right;
+}
+.message-group.me .message-body {
+    margin-right: 0px;
+}
+
+.message-username {
+    color: #898989;
+    font-size: 14px;
+    margin: 0 0 5px 0px;
+    font-weight: normal;
+}
+
+.typing {
+    position: relative;
+    margin-bottom: 15px;
+}
+.typing .typing-body {
+    margin-left: 50px;
+}
+.typing .typing-image {
+    height: 40px;
+    margin-right: 5px;
 }

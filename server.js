@@ -10,9 +10,20 @@ server.listen(3000);
 
 var listUsers = [];
 var listTyping = [];
+var listMessages = [];
 
 io.on('connection', function(socket) {
     console.log('Co nguoi ket noi ' + socket.id);
+
+    socket.on('disconnect', function() {
+        console.log(socket.username + ' vua ngat ket noi');
+        listUsers.splice(listUsers.indexOf(socket.username), 1);
+        socket.broadcast.emit('server-send-list-users', listUsers);
+        if (listTyping.indexOf(socket.username) !== -1) {
+            listTyping.splice(listUsers.indexOf(socket.username), 1);
+            socket.broadcast.emit('server-send-stop-typing', socket.username);
+        }
+    });
 
     socket.on('client-send-username', function(data) {
         if (listUsers.indexOf(data) !== -1) {
@@ -24,13 +35,14 @@ io.on('connection', function(socket) {
         } else {
             socket.username = data;
             listUsers.push(data);
-            console.log(listUsers);
             socket.emit('server-send-register-success', {
                 res: data + ' register successfully',
                 username: data
             });
             io.sockets.emit('server-send-list-users', listUsers);
             io.sockets.emit('server-send-list-typing', listTyping);
+            io.sockets.emit('server-send-list-messages', listMessages);
+            console.log(listMessages);
         }
     });
 
@@ -38,6 +50,10 @@ io.on('connection', function(socket) {
         console.log(socket.username + ' loged out ');
         listUsers.splice(listUsers.indexOf(socket.username), 1);
         socket.broadcast.emit('server-send-list-users', listUsers);
+        if (listTyping.indexOf(socket.username) !== -1) {
+            listTyping.splice(listTyping.indexOf(socket.username) , 1);
+            socket.broadcast.emit('server-send-stop-typing', socket.username);
+        }
     });
 
     socket.on('client-send-message', function(data) {
@@ -46,15 +62,20 @@ io.on('connection', function(socket) {
             username: socket.username,
             message: data
         });
+        listMessages.push({
+            id: socket.id,
+            username: socket.username,
+            message: data
+        });
     });
 
     socket.on('client-send-typing', function() {
         listTyping.push(socket.username);
-        socket.broadcast.emit('server-send-list-typing', listTyping);
+        socket.broadcast.emit('server-send-typing', socket.username);
     });
     socket.on('client-send-stop-typing', function() {
         listTyping.splice(listTyping.indexOf(socket.username), 1);
-        socket.broadcast.emit('server-send-list-typing', listTyping);
+        socket.broadcast.emit('server-send-stop-typing', socket.username);
     });
 
 });
