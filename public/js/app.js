@@ -1,4 +1,4 @@
-var socket = io('http://192.168.1.4:5000');
+var socket = io('https://appchat-nodejs-socketio.herokuapp.com');
 
 socket.on('server-send-register-error', function(data) {
     console.log(data);
