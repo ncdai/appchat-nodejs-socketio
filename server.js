@@ -6,7 +6,8 @@ app.set('views', './views');
 
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
-server.listen(3000);
+var port = process.env.PORT || 5000;
+server.listen(port);
 
 var listUsers = [];
 var listTyping = [];

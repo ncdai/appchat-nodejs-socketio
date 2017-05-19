@@ -1,4 +1,4 @@
-var socket = io('http://192.168.1.4:3000');
+var socket = io('http://192.168.1.4:5000');
 
 socket.on('server-send-register-error', function(data) {
     console.log(data);
